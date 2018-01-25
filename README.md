@@ -42,6 +42,19 @@ function(arg1, arg2) {
 }
 ```
 
+#### Arrow function concise body
+```
+// block body
+(x, y) => { 
+  return x + y; 
+}; 
+```
+
+```
+// concise body
+(x, y) => x + y; 
+```
+
 ### [Array iteration methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
 Provide a declaritive syntax for collection iteration
 
@@ -50,7 +63,7 @@ Provide a declaritive syntax for collection iteration
 const myArray = [1,2,3];
 const mySquaredArray = [];
 for (let i=0, i<) {
-  myDoubledArray[i] = myArray[i] * myArray[i];
+  mySquaredArray[i] = myArray[i] * myArray[i];
 }
 ```
 
@@ -69,7 +82,27 @@ const mySquaredArray = myArray.map((arrayElement) => {
 An async function returns a `Promise` when called. The `Promise` will be resolved when the async function returns a value.
 
 
-### Spread syntax
+### [Spread syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_operator)
+
+```
+const insertAtIndex = function(origArray, index, newItem) {
+  const newArray = [];
+  newArray.concat(origArray.slice(0, index));
+  newArray.push(newItem);
+  newArray.concat(origArray.slice(index + 1))
+  return newArray;
+}
+
+```
+
+```
+// spread operators + arrow functon with concise body
+const insertAtIndex = (origArray, index, newItem) => [
+  ...origArray.slice(0, index),
+  newItem,
+  ...origArray.slice(index + 1)
+];
+```
 
 
 ## Kibana idiosyncrasies
