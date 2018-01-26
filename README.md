@@ -205,6 +205,31 @@ Re-usable [UI components](https://github.com/elastic/kibana/tree/master/ui_frame
 The best way to build plugins is to look at working examples. Kibana uses its own plugin system so there are lots of great examples in the code base.
 
 ### New REST endpoint
+Specify [init](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/timelion/index.js#L87) element in `uiExports`
+
+[init](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/timelion/init.js#L4) is a function that gets pass `hapi` server object when called.
+
+Add enpoint by [adding route to server](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/timelion/server/routes/run.js#L15)
+
+
+```
+return new kibana.Plugin({
+  require: ['kibana', 'elasticsearch'],
+  uiExports: {},
+  init: function (server) {
+    server.route({
+      method: ['POST', 'GET'],
+      path: '/api/timelion/run',
+      handler: async (request, reply) => {
+        // do stuff
+        const results = [];
+        reply(results);
+      }
+    });
+  }
+});
+```
+
 
 ### New config value
 
