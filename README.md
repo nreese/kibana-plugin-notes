@@ -190,21 +190,7 @@ _this.getIndexPatterns = function () {
 #### webpack
 Module bundler. Builds `KIBANA_HOME/optimize/bundles/kibana.bundle.js` from `KIBANA_HOME/src/`
 
-[webpackShims/leaflet.js](https://github.com/elastic/kibana/blob/6.2/webpackShims/leaflet.js)
-```javascript
-require('../node_modules/leaflet/dist/leaflet.css');
-window.L = module.exports = require('../node_modules/leaflet/dist/leaflet');
-window.L.Browser.touch = false;
-window.L.Browser.pointer = false;
-
-require('../node_modules/leaflet.heat/dist/leaflet-heat.js');
-
-require('../node_modules/leaflet-draw/dist/leaflet.draw.css');
-require('../node_modules/leaflet-draw/dist/leaflet.draw.js');
-
-require('../node_modules/leaflet-responsive-popup/leaflet.responsive.popup.css');
-require('../node_modules/leaflet-responsive-popup/leaflet.responsive.popup.js');
-```
+[webpackShims](https://github.com/elastic/kibana/tree/6.0/webpackShims)
 
 webpack alias are used to make import statements cleaner but can cause confusion when looking for files by path.
 * [ui alias](https://github.com/elastic/kibana/blob/6.0/src/ui/ui_bundler_env.js#L31) 
@@ -438,6 +424,16 @@ import chrome from 'ui/chrome';
 const myNewProperty = chrome.getInjected('myNewProperty');
 ```
 
-### 
+### Access saved objects like `Index Patterns` and `Saved Searchs`
+
+
+### Interact with Kibana global time
+
+### Hack plugin
+
+### Visualization plugin
+
+### field formatter plugin
+
 
 
