@@ -1,5 +1,5 @@
 # Kibana knowledge share
-This is a collection of all of the things I wish I had known when I first starting looking at Kibana code.
+This is a collection of knowledge that will make Kibana code and plugin development a little bit easier.
 
 **Note:** Kibana is constantly changing and getting better. This document is targeted at the 6.0 baseline.
 
@@ -293,8 +293,52 @@ export const VisTypesRegistryProvider = uiRegistry({
 });
 ```
 
-When creating a plugin, you call the `register` method of the registry
+Example of registering new module [timeline/public/vis/index.js](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/timelion/public/vis/index.js#L18)
+```
+import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
 
+VisTypesRegistryProvider.register(TimelionVisProvider);
+
+function TimelionVisProvider(Private) {
+  const VisFactory = Private(VisFactoryProvider);
+  const timelionRequestHandler = Private(TimelionRequestHandlerProvider);
+
+  // return the visType object, which kibana will use to display and configure new
+  // Vis object of this type.
+  return VisFactory.createAngularVisualization({
+    name: 'timelion',
+    title: 'Timelion',
+    image,
+    description: 'Build time-series using functional expressions',
+    category: CATEGORY.TIME,
+    visConfig: {
+      defaults: {
+        expression: '.es(*)',
+        interval: 'auto'
+      },
+      template: visConfigTemplate,
+    },
+    editorConfig: {
+      optionsTemplate: editorConfigTemplate,
+      defaultSize: DefaultEditorSize.MEDIUM,
+    },
+    requestHandler: timelionRequestHandler.handler,
+    responseHandler: 'none',
+    options: {
+      showIndexSelection: false
+    }
+  });
+}
+```
+
+Example of using the registry in [vis.js](https://github.com/elastic/kibana/blob/6.0/src/ui/public/vis/vis.js#L13)
+```
+import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
+
+const visTypes = Private(VisTypesRegistryProvider);
+
+this.type = visTypes.byName[type];
+```
 
 
 ### Saved Searches
