@@ -301,33 +301,8 @@ VisTypesRegistryProvider.register(TimelionVisProvider);
 
 function TimelionVisProvider(Private) {
   const VisFactory = Private(VisFactoryProvider);
-  const timelionRequestHandler = Private(TimelionRequestHandlerProvider);
-
-  // return the visType object, which kibana will use to display and configure new
-  // Vis object of this type.
-  return VisFactory.createAngularVisualization({
-    name: 'timelion',
-    title: 'Timelion',
-    image,
-    description: 'Build time-series using functional expressions',
-    category: CATEGORY.TIME,
-    visConfig: {
-      defaults: {
-        expression: '.es(*)',
-        interval: 'auto'
-      },
-      template: visConfigTemplate,
-    },
-    editorConfig: {
-      optionsTemplate: editorConfigTemplate,
-      defaultSize: DefaultEditorSize.MEDIUM,
-    },
-    requestHandler: timelionRequestHandler.handler,
-    responseHandler: 'none',
-    options: {
-      showIndexSelection: false
-    }
-  });
+  
+  return VisFactory.createAngularVisualization({ ...details omitted...});
 }
 ```
 
