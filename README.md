@@ -12,15 +12,14 @@ Functions are really objects and can have properties.
 const myFunc = function(a, b) {
   return a + b;
 }
-
 myFunc.prop1 = 'someValue';
 myFunc.prop2 = function () {
   return 'a function property of a function, my head hurts';
 }
 
-console.log(myFunc(1,2)) // 3
-console.log(myFunc.prop1) // someValue
-console.log(myFunc.prop2()) // a function property of a function, my head hurts
+console.log( myFunc(1,2) ) // 3
+console.log( myFunc.prop1 ) // someValue
+console.log( myFunc.prop2() ) // a function property of a function, my head hurts
 ```
 
 ## ECMAScript 6 and TC-39
