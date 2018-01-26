@@ -206,6 +206,19 @@ require('../node_modules/leaflet-responsive-popup/leaflet.responsive.popup.css')
 require('../node_modules/leaflet-responsive-popup/leaflet.responsive.popup.js');
 ```
 
+webpack alias are used to make import statements cleaner but can cause confusion when looking for files by path.
+* [ui alias](https://github.com/elastic/kibana/blob/6.0/src/ui/ui_bundler_env.js#L31) 
+* [plugin alias](https://github.com/elastic/kibana/blob/6.0/src/ui/ui_bundler_env.js#L51)
+
+Example from [markdown_vis.js](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/markdown_vis/public/markdown_vis.js)
+```
+// Src is located at KIBANA_HOME/src/ui/public/vis/vis_factory.js
+import { VisFactoryProvider } from 'ui/vis/vis_factory';
+
+// Src is located at KIBANA_HOME/src/core_plugins/markdown_vis/public/markdown_vis.js
+import 'plugins/markdown_vis/markdown_vis_controller';
+```
+
 ### Dependency injection
 
 
