@@ -191,11 +191,25 @@ require('../node_modules/leaflet-responsive-popup/leaflet.responsive.popup.js');
 ### Saved Searches
 
 
-## Re-usable UI components
-
-### UI framework
+## UI framework
+Re-usable [UI components](https://github.com/elastic/kibana/tree/master/ui_framework). **Warning:** This has been deprecated in 6.2 and will be replaced by [Elastic UI Framework](https://github.com/elastic/eui)
 
 
 ## Plugin examples
+6.0 resources
+* [Developing Kibana Visualizations - video](https://www.elastic.co/webinars/creating-custom-kibana-visualizations)
+* [Developing Visualizations - kibana documentation](https://www.elastic.co/guide/en/kibana/6.0/development-visualize-index.html)
+* [Developing new Kibana visualizations - blog](https://www.elastic.co/blog/developing-new-kibana-visualizations)
+* Not a plugin link but found this blog post about [custom region maps](https://www.elastic.co/blog/custom-region-maps-in-kibana-6-0) that I think you would be interested in
+
+The best way to build plugins is to look at working examples. Kibana uses its own plugin system so there are lots of great examples in the code base.
+
+### New REST endpoint
+
+### New config value
+
+### New kibana.yml value
+
+### 
 
 
