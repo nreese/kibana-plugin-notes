@@ -360,10 +360,39 @@ export default function (kibana) {
 }
 ```
 
+### New Advanced Setting config value
 
-### New config value
+### Add property to kibana.yml
+```
+// Plugin 
+export default function (kibana) {
+  id: 'myPlugin',
+  configPrefix: 'my.namespaced.plugin',
+  return new kibana.Plugin({
+    require: ['kibana', 'elasticsearch'],
+    uiExports: {
+      injectDefaultVars(server, options) {
+        return {
+          myNewProperty: options.myNewProperty
+        };
+      }
+    },
+    config(Joi) {
+      return Joi.object({
+        enabled: Joi.boolean().default(true),
+        myNewProperty: Joi.string(),
+      }).default();
+    }
+  });
+}
+```
 
-### New kibana.yml value
+```
+// Access property in plugin
+import chrome from 'ui/chrome';
+
+const myNewProperty = chrome.getInjected('myNewProperty');
+```
 
 ### 
 
