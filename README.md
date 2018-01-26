@@ -185,8 +185,87 @@ require('../node_modules/leaflet-responsive-popup/leaflet.responsive.popup.js');
 ### Dependency injection
 
 
-### Registries
+### [Indexed Array](https://github.com/elastic/kibana/blob/6.0/src/ui/public/indexed_array/indexed_array.js#L24)
+An array with some methods added to make searching easy.
 
+```
+// this is generally a data-structure that IndexedArray is good for managing
+const users = [
+  { name: 'John', id: 69, username: 'beast', group: 'admins' },
+  { name: 'Anon', id: 0, username: 'shhhh', group: 'secret' },
+  { name: 'Fern', id: 42, username: 'kitty', group: 'editor' },
+  { name: 'Mary', id: 55, username: 'sheep', group: 'editor' }
+];
+
+const indexedArray = new IndexedArray({
+  index: ['username'],
+  group: ['group'],
+  order: ['id'],
+  initialSet: users
+});
+
+const usersJohn = indexedArray.byUsername('beast');
+```
+
+### Registries
+Registries are a function with a `register` property.
+* Calling `register`, adds a moduleProvider to an array. A 
+* Calling the function itself turns th
+TODO
+
+[uiRegistry](https://github.com/elastic/kibana/blob/6.0/src/ui/public/registry/_registry.js#L48)
+```
+export function uiRegistry(spec) {
+  spec = spec || {};
+
+  const constructor = _.has(spec, 'constructor') && spec.constructor;
+  const invokeProviders = _.has(spec, 'invokeProviders') && spec.invokeProviders;
+  const iaOpts = _.defaults(_.pick(spec, IndexedArray.OPT_NAMES), { index: ['name'] });
+  const props = _.omit(spec, notPropsOptNames);
+  const providers = [];
+
+  const registry = function (Private, $injector) {
+    // call the registered providers to get their values
+    iaOpts.initialSet = invokeProviders
+      ? $injector.invoke(invokeProviders, undefined, { providers })
+      : providers.map(Private);
+
+    // index all of the modules
+    let modules = new IndexedArray(iaOpts);
+
+    // mixin other props
+    _.assign(modules, props);
+
+    // construct
+    if (constructor) {
+      modules = $injector.invoke(constructor, modules) || modules;
+    }
+
+    return modules;
+  };
+
+  registry.displayName = '[registry ' + props.name + ']';
+
+  registry.register = function (privateModule) {
+    providers.push(privateModule);
+    return registry;
+  };
+
+  return registry;
+}
+```
+
+
+[vis_types.js](https://github.com/elastic/kibana/blob/6.0/src/ui/public/registry/vis_types.js)
+```
+import { uiRegistry } from 'ui/registry/_registry';
+
+export const VisTypesRegistryProvider = uiRegistry({
+  name: 'visTypes',
+  index: ['name'],
+  order: ['title']
+});
+```
 
 ### Saved Searches
 
@@ -205,29 +284,31 @@ Re-usable [UI components](https://github.com/elastic/kibana/tree/master/ui_frame
 The best way to build plugins is to look at working examples. Kibana uses its own plugin system so there are lots of great examples in the code base.
 
 ### New REST endpoint
-Specify [init](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/timelion/index.js#L87) element in `uiExports`
+Specify [init](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/timelion/index.js#L87) element in plugin definition.
 
 [init](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/timelion/init.js#L4) is a function that gets pass `hapi` server object when called.
 
 Add enpoint by [adding route to server](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/timelion/server/routes/run.js#L15)
 
-
 ```
-return new kibana.Plugin({
-  require: ['kibana', 'elasticsearch'],
-  uiExports: {},
-  init: function (server) {
-    server.route({
-      method: ['POST', 'GET'],
-      path: '/api/timelion/run',
-      handler: async (request, reply) => {
-        // do stuff
-        const results = [];
-        reply(results);
-      }
-    });
-  }
-});
+// Plugin 
+export default function (kibana) {
+  return new kibana.Plugin({
+    require: ['kibana', 'elasticsearch'],
+    uiExports: {},
+    init: function (server) {
+      server.route({
+        method: ['POST', 'GET'],
+        path: '/api/timelion/run',
+        handler: async (request, reply) => {
+          // do stuff
+          const results = [];
+          reply(results);
+        }
+      });
+    }
+  });
+}
 ```
 
 
