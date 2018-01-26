@@ -363,6 +363,7 @@ export default function (kibana) {
 ### New Advanced Setting config value
 
 ### Add property to kibana.yml
+Update `joi` schema with new property(s). Use `injectDefaultVars` to expose the property for front-end code
 ```
 // Plugin 
 export default function (kibana) {
@@ -387,8 +388,13 @@ export default function (kibana) {
 }
 ```
 
+Add new property to kibana.yml
 ```
-// Access property in plugin
+my.namespaced.plugin.myNewProperty: "hello world"
+```
+
+Use chrome to access the property in your plugin
+```
 import chrome from 'ui/chrome';
 
 const myNewProperty = chrome.getInjected('myNewProperty');
