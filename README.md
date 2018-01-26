@@ -8,7 +8,7 @@ This is a collection of knowledge that will make Kibana code and plugin developm
 ### Functions are objects
 Functions are objects and can have properties.
 
-```
+```javascript
 const myFunc = function(a, b) {
   return a + b;
 }
@@ -28,20 +28,20 @@ Kibana uses the lastest Javascript. Getting familiar with newer language feature
 ### [Destructuring assignment](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)
 Concise way of unpacking values from arrays, or properties from objects, into distinct variables.
 
-```
+```javascript
 const myObj = {
   prop1: 'someValue',
   prop2: 'anotherValue'
 };
 ```
 
-```
+```javascript
 // Old way
 const prop1 = myObj.prop1;
 const prop2 = myObj.prop2;
 ```
 
-```
+```javascript
 //Destructuring assignment
 { prop1, prop2 } = myObj;
 ```
@@ -51,7 +51,7 @@ const prop2 = myObj.prop2;
 ### [Arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions)
 Shorter syntax, does not have its own `this`
 
-```
+```javascript
 const self = this;
 // function syntax
 function(arg1, arg2) {
@@ -59,7 +59,7 @@ function(arg1, arg2) {
 }
 ```
 
-```
+```javascript
 // Arrow functions
 (arg1, arg2) => {
   this.sum = arg1 + arg2;
@@ -67,14 +67,14 @@ function(arg1, arg2) {
 ```
 
 #### Arrow function concise body
-```
+```javascript
 // block body
 (x, y) => { 
   return x + y; 
 }; 
 ```
 
-```
+```javascript
 // concise body
 (x, y) => x + y; 
 ```
@@ -82,7 +82,7 @@ function(arg1, arg2) {
 ### [Array iteration methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
 Provide a declaritive syntax for collection iteration
 
-```
+```javascript
 // imperative iteration
 const myArray = [1,2,3];
 const mySquaredArray = [];
@@ -91,7 +91,7 @@ for (let i=0, i<) {
 }
 ```
 
-```
+```javascript
 // Declaritive iteration
 const myArray = [1,2,3];
 const mySquaredArray = myArray.map((arrayElement) => {
@@ -108,7 +108,7 @@ An async function returns a `Promise` when called. The `Promise` will be resolve
 
 ### [Spread syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_operator)
 
-```
+```javascript
 const insertAtIndex = function(origArray, index, newItem) {
   const newArray = [];
   newArray.concat(origArray.slice(0, index));
@@ -119,7 +119,7 @@ const insertAtIndex = function(origArray, index, newItem) {
 
 ```
 
-```
+```javascript
 // spread operators + arrow functon with concise body
 const insertAtIndex = (origArray, index, newItem) => [
   ...origArray.slice(0, index),
@@ -137,7 +137,7 @@ Understanding the build process makes it easier to find things in source code
 #### babel
 JavaScript transpiler that converts new JavaScript syntax into plain old ES5 JavaScript that can run in any browser (even the old ones).
 
-```
+```javascript
 // Actuall code
 getIndexPatterns = async (search) => {
   const resp = await this.props.scope.vis.API.savedObjectsClient.find({
@@ -151,7 +151,7 @@ getIndexPatterns = async (search) => {
 }
 ```
 
-```
+```javascript
 // What's running in browser
 _this.getIndexPatterns = function () {
   var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(search) {
@@ -191,7 +191,7 @@ _this.getIndexPatterns = function () {
 Module bundler. Builds `KIBANA_HOME/optimize/bundles/kibana.bundle.js` from `KIBANA_HOME/src/`
 
 [webpackShims/leaflet.js](https://github.com/elastic/kibana/blob/6.2/webpackShims/leaflet.js)
-```
+```javascript
 require('../node_modules/leaflet/dist/leaflet.css');
 window.L = module.exports = require('../node_modules/leaflet/dist/leaflet');
 window.L.Browser.touch = false;
@@ -212,7 +212,7 @@ require('../node_modules/leaflet-responsive-popup/leaflet.responsive.popup.js');
 ### [Indexed Array](https://github.com/elastic/kibana/blob/6.0/src/ui/public/indexed_array/indexed_array.js#L24)
 An array with some special methods added to make searching easy.
 
-```
+```javascript
 // this is generally a data-structure that IndexedArray is good for managing
 const users = [
   { name: 'John', id: 69, username: 'beast', group: 'admins' },
@@ -240,7 +240,7 @@ Registries are a function with a `register` property.
   * returns Indexed Array.
 
 [uiRegistry](https://github.com/elastic/kibana/blob/6.0/src/ui/public/registry/_registry.js#L48)
-```
+```javascript
 export function uiRegistry(spec) {
   spec = spec || {};
 
@@ -283,7 +283,7 @@ export function uiRegistry(spec) {
 
 
 [vis_types.js](https://github.com/elastic/kibana/blob/6.0/src/ui/public/registry/vis_types.js)
-```
+```javascript
 import { uiRegistry } from 'ui/registry/_registry';
 
 export const VisTypesRegistryProvider = uiRegistry({
@@ -294,7 +294,7 @@ export const VisTypesRegistryProvider = uiRegistry({
 ```
 
 Example of registering new module [timeline/public/vis/index.js](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/timelion/public/vis/index.js#L18)
-```
+```javascript
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
 
 VisTypesRegistryProvider.register(TimelionVisProvider);
@@ -307,7 +307,7 @@ function TimelionVisProvider(Private) {
 ```
 
 Example of using the registry in [vis.js](https://github.com/elastic/kibana/blob/6.0/src/ui/public/vis/vis.js#L13)
-```
+```javascript
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
 
 const visTypes = Private(VisTypesRegistryProvider);
@@ -339,7 +339,7 @@ Specify [init](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/timel
 
 Add enpoint by [adding route to server](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/timelion/server/routes/run.js#L15)
 
-```
+```javascript
 // Plugin 
 export default function (kibana) {
   return new kibana.Plugin({
@@ -363,7 +363,7 @@ export default function (kibana) {
 ### New Advanced Setting config value
 Specify [uiSettingDefaults](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/timelion/index.js#L44) property of `uiExports`.
 
-```
+```javascript
 export default function (kibana) {
   return new kibana.Plugin({
     require: ['kibana', 'elasticsearch'],
@@ -389,7 +389,7 @@ Update the Joi schema instance with new property(s).
 
 Use `injectDefaultVars` to expose the property for front-end code
 
-```
+```javascript
 // Plugin 
 export default function (kibana) {
   id: 'myPlugin',
@@ -419,7 +419,7 @@ my.namespaced.plugin.myNewProperty: "hello world"
 ```
 
 Use chrome to access the property in your plugin
-```
+```javascript
 import chrome from 'ui/chrome';
 
 const myNewProperty = chrome.getInjected('myNewProperty');
