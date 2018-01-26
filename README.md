@@ -3,10 +3,10 @@ This is a collection of all of the things I wish I had known when I first starti
 
 **Note:** Kibana is constantly changing and getting better. This document is targeted at the 6.0 baseline.
 
-## Good understanding of Javascript
+## Complete understanding of Javascript
 
 ### Functions are objects
-Functions are really objects and can have properties.
+Functions are objects and can have properties.
 
 ```
 const myFunc = function(a, b) {
@@ -210,7 +210,7 @@ require('../node_modules/leaflet-responsive-popup/leaflet.responsive.popup.js');
 
 
 ### [Indexed Array](https://github.com/elastic/kibana/blob/6.0/src/ui/public/indexed_array/indexed_array.js#L24)
-An array with some methods added to make searching easy.
+An array with some special methods added to make searching easy.
 
 ```
 // this is generally a data-structure that IndexedArray is good for managing
@@ -233,9 +233,11 @@ const usersJohn = indexedArray.byUsername('beast');
 
 ### Registries
 Registries are a function with a `register` property.
-* Calling `register`, adds a moduleProvider to an array. A 
-* Calling the function itself turns th
-TODO
+* Calling `register`, adds a `moduleProvider` to an array. `moduleProvider` is a function that returns a module.
+* Calling the function itself
+  * Calls each moduleProvider (with injected dependencies)
+  * Each module is added to an Indexed Array.
+  * returns Indexed Array.
 
 [uiRegistry](https://github.com/elastic/kibana/blob/6.0/src/ui/public/registry/_registry.js#L48)
 ```
@@ -290,6 +292,10 @@ export const VisTypesRegistryProvider = uiRegistry({
   order: ['title']
 });
 ```
+
+When creating a plugin, you call the `register` method of the registry
+
+
 
 ### Saved Searches
 
