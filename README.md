@@ -361,9 +361,34 @@ export default function (kibana) {
 ```
 
 ### New Advanced Setting config value
+Specify [uiSettingDefaults](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/timelion/index.js#L44) property of `uiExports`.
+
+```
+export default function (kibana) {
+  return new kibana.Plugin({
+    require: ['kibana', 'elasticsearch'],
+    uiExports: {
+      uiSettingDefaults: {
+        'timelion:showTutorial': {
+          value: false,
+          description: 'Should I show the tutorial by default when entering the timelion app?'
+        }
+      }
+    }
+  });
+}
+
+```
+
 
 ### Add property to kibana.yml
-Update `joi` schema with new property(s). Use `injectDefaultVars` to expose the property for front-end code
+Specify `config` property in plugin definition. 
+
+`config` is a function that gets passed a Joi schema instance.
+Update the Joi schema instance with new property(s). 
+
+Use `injectDefaultVars` to expose the property for front-end code
+
 ```
 // Plugin 
 export default function (kibana) {
@@ -378,7 +403,7 @@ export default function (kibana) {
         };
       }
     },
-    config(Joi) {
+    config: function (Joi) {
       return Joi.object({
         enabled: Joi.boolean().default(true),
         myNewProperty: Joi.string(),
