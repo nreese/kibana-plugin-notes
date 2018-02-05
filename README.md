@@ -11,8 +11,7 @@ This is a collection of knowledge that will make Kibana code and plugin developm
 4) Inside of plugins, try to limit `ui/` imports and rely on `vis.API` for dependency injection. Future versions of Kibana will try to more module and limit allowing plugins to import directly from one module to another.
 
 
-## Foundational knowledge
-Kibana uses the lastest Javascript. Getting familiar with newer language features from ECMAScript 6 and TC-39 helps a lot.
+## Foundational knowledge (Javascript, ECMAScript 6 and TC-39, build process)
 
 ### Functions are objects
 Functions are objects and can have properties.
@@ -387,14 +386,8 @@ const requestHandler = getHandler(requestHandlers, $scope.vis.type.requestHandle
 const responseHandler = getHandler(responseHandlers, $scope.vis.type.responseHandler);
         
 $scope.fetch = _.debounce(function () {
-  // If destroyed == true the scope has already been destroyed, while this method
-  // was still waiting for its debounce, in this case we don't want to start
-  // fetching new data and rendering.
-  if (!$scope.vis.initialized || !$scope.savedObj || destroyed) return;
-  // searchSource is only there for courier request handler
   requestHandler($scope.vis, $scope.appState, $scope.uiState, queryFilter, $scope.savedObj.searchSource)
     .then(requestHandlerResponse => {
-    
       return Promise.resolve(responseHandler($scope.vis, requestHandlerResponse));
     }, e => {
       // error state - omitted for readability
