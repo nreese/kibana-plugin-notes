@@ -382,8 +382,9 @@ SourceAbstract.prototype.onResults = function (handler) {
 
 [Courier](https://github.com/elastic/kibana/blob/6.0/src/ui/public/courier/courier.js) is Kibana's queueing mechanim around `_msearch`. All items in the request queue are serilized into a single `_msearch` request with a seperate `header\n body\n` section per item in the queue.
 
-### The `msearch` life-cycle: dashboard, panels, SearchSource, and Courier
-Panels are wrapped in [visualize directive](https://github.com/elastic/kibana/blob/6.0/src/ui/public/visualize/visualize.js). The visualize directive monitors the application state and calls request/response handlers as needed.
+
+### The `msearch` life-cycle: dashboard, visualizations, SearchSource, and Courier
+Visualization panels are wrapped in the [visualize directive](https://github.com/elastic/kibana/blob/6.0/src/ui/public/visualize/visualize.js). The visualize directive monitors the application state and calls request/response handlers as needed.
 
 ```
 const requestHandler = getHandler(requestHandlers, $scope.vis.type.requestHandler);
