@@ -1,7 +1,13 @@
 # Kibana knowledge share
 This is a collection of knowledge that will make Kibana code and plugin development a little bit easier.
 
-**Note:** Kibana is constantly changing and getting better. This document is targeted at the 6.0 baseline.
+## Future proof your plugins
+**Note:** Kibana is constantly changing and getting better. This document is targeted at the 6.0 baseline. Examples and architecture will not be accurate for future versions of kibana. 
+
+1) Use React. We are in the long, slow, and painful process of removing Angular from Kibana
+2) Do not use Bootstrap CSS classes or components. Bootstrap is getting removed from Kibana
+3) Write Jest tests instead of Mocha tests
+4) Inside of plugins, try to limit `ui/` imports and rely on `vis.API` for dependency injection. Future versions of Kibana will try to more module and limit allowing plugins to import directly from one module to another.
 
 ## Complete understanding of Javascript
 
