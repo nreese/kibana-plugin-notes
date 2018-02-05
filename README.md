@@ -206,6 +206,25 @@ import 'plugins/markdown_vis/markdown_vis_controller';
 ```
 
 ### Dependency injection
+AngularJS doesn't handle namespace collisions for services. If you have 2 different modules with identical service names and include both modules in your app, which service will be made provided?
+
+[Private](https://github.com/elastic/kibana/blob/6.0/src/ui/public/private/private.js) is Kibana's module loader that resolves this problem by mapping angular service's to a file path.
+
+`Private` is a function that takes a single argument, `provider`. When the `Private` function is executed, it calls the `provider` function with injected angular dependencies and returns the result. 
+
+https://github.com/elastic/kibana/blob/6.0/src/ui/public/agg_types/buckets/date_histogram.js#L12
+```
+export function AggTypesBucketsDateHistogramProvider(timefilter, config, Private) {
+   ...
+}
+```
+
+https://github.com/elastic/kibana/blob/6.0/src/ui/public/agg_types/index.js#L63
+```
+import { AggTypesBucketsDateHistogramProvider } from 'ui/agg_types/buckets/date_histogram';
+
+Private(AggTypesBucketsDateHistogramProvider),
+```
 
 
 ### [Indexed Array](https://github.com/elastic/kibana/blob/6.0/src/ui/public/indexed_array/indexed_array.js#L24)
