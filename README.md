@@ -334,7 +334,47 @@ this.type = visTypes.byName[type];
 ```
 
 
-### Saved Searches
+### SearchSource and Courier
+[SearchSource](https://github.com/elastic/kibana/blob/6.0/src/ui/public/courier/data_source/search_source.js) is Kibana's wrapper around Elastic Search `search`.
+
+SearchSources can inherit from other SearchSources. When a SearchSource is serialized into JSON, the inhertience tree is flattened into a single search body. Below is how the SearchSource hierarchy looks for Dashboards.
+1) Each Visualization panel has its own search source that inherts from the application search source
+2) Application search source: Contains filter pills and query bar state. It inherits from root search source.
+3) Root search source: Contains global time range and pinned filters
+
+SearchSource can be executed by calling `fetch` or `onResult`. Both result in request getting added to `Courier's` queue.
+
+[fetch](https://github.com/elastic/kibana/blob/6.0/src/ui/public/courier/data_source/_abstract.js#L180)
+```
+SourceAbstract.prototype.fetch = function () {
+  const self = this;
+  let req = _.first(self._myStartableQueued());
+
+  if (!req) {
+    req = self._createRequest();
+  }
+
+  fetchSoon.these([req]);
+
+  return req.getCompletePromise();
+};
+```
+
+[onResults](https://github.com/elastic/kibana/blob/6.0/src/ui/public/courier/data_source/_abstract.js#L133)
+```
+SourceAbstract.prototype.onResults = function (handler) {
+  const self = this;
+
+  return new PromiseEmitter(function (resolve, reject) {
+    const defer = Promise.defer();
+    defer.promise.then(resolve, reject);
+
+    self._createRequest(defer);
+  }, handler);
+};
+```
+
+[Courier](https://github.com/elastic/kibana/blob/6.0/src/ui/public/courier/courier.js) is Kibana's queueing mechanim around `_msearch`. All items in the request queue are serilized into a single `_msearch` request with a seperate `header\n body\n` section per item in the queue.
 
 
 ## UI framework
