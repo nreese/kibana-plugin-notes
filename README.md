@@ -446,7 +446,8 @@ const myNewProperty = chrome.getInjected('myNewProperty');
 ### Visualization plugin
 Visualization plugins were completely refactored in 6.0.
 
-#### Access Kibana dependencies from `vis.API` instead of import providers and calling `Private(Provider)`
+#### Access Kibana dependencies
+Access Kibana dependencies from `vis.API` instead of import providers and calling `Private(Provider)`
 
 https://github.com/elastic/kibana/blob/6.0/src/ui/public/vis/vis.js#L58
 ```
@@ -456,8 +457,7 @@ this.API = {
   indexPatterns: indexPatterns,
   timeFilter: timefilter,
   filterManager: filterManager,
-  queryFilter: queryFilter,
-  events: {...}
+  queryFilter: queryFilter
 };
 ```
 
@@ -519,3 +519,14 @@ MyReactTab.propTypes = {
 ```
 
 Live example - [input controls ControlsTab](https://github.com/elastic/kibana/blob/6.1/src/core_plugins/input_control_vis/public/components/editor/controls_tab.js#L15)
+
+#### Request handlers
+Visualization request handler gets called when the dashboard needs to pull new data. This happens when filters are added/removed/changed, when timepicker is updated, or when page is refreshed.
+
+[courier](https://github.com/elastic/kibana/blob/6.0/src/ui/public/vis/request_handlers/courier.js) is the default request handler. `Courier` converts your "Data tab" Aggregation Configurations into an `msearch` request that gets sent to Elasticsearch.
+
+#### Response handler
+Function that receives the data from a request handler and converts it into a usable format. The response from `Courier` request handler is Elasticsearch aggregation results.
+
+The Default response handler converts Elastic Search aggregation results into a tabular format.
+
