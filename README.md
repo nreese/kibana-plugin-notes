@@ -443,10 +443,6 @@ import chrome from 'ui/chrome';
 const myNewProperty = chrome.getInjected('myNewProperty');
 ```
 
-
-
-### Hack plugin
-
 ### Visualization plugin
 Visualization plugins were completely refactored in 6.0.
 
@@ -522,17 +518,4 @@ MyReactTab.propTypes = {
 };
 ```
 
-Example plugin - [input controls](https://github.com/elastic/kibana/blob/6.1/src/core_plugins/input_control_vis/public/components/editor/controls_tab.js#L15)
-
-#### Interact with Kibana global time
-
-
-
-
-
-
-
-### field formatter plugin
-
-
-
+Live example - [input controls ControlsTab](https://github.com/elastic/kibana/blob/6.1/src/core_plugins/input_control_vis/public/components/editor/controls_tab.js#L15)
