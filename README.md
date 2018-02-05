@@ -382,6 +382,95 @@ SourceAbstract.prototype.onResults = function (handler) {
 
 [Courier](https://github.com/elastic/kibana/blob/6.0/src/ui/public/courier/courier.js) is Kibana's queueing mechanim around `_msearch`. All items in the request queue are serilized into a single `_msearch` request with a seperate `header\n body\n` section per item in the queue.
 
+### The `msearch` life-cycle: dashboard, panels, SearchSource, and Courier
+Panels are wrapped in [visualize directive](https://github.com/elastic/kibana/blob/6.0/src/ui/public/visualize/visualize.js). The visualize directive monitors the application state and calls request/response handlers as needed.
+
+```
+const requestHandler = getHandler(requestHandlers, $scope.vis.type.requestHandler);
+const responseHandler = getHandler(responseHandlers, $scope.vis.type.responseHandler);
+        
+$scope.fetch = _.debounce(function () {
+  // If destroyed == true the scope has already been destroyed, while this method
+  // was still waiting for its debounce, in this case we don't want to start
+  // fetching new data and rendering.
+  if (!$scope.vis.initialized || !$scope.savedObj || destroyed) return;
+  // searchSource is only there for courier request handler
+  requestHandler($scope.vis, $scope.appState, $scope.uiState, queryFilter, $scope.savedObj.searchSource)
+    .then(requestHandlerResponse => {
+    
+      return Promise.resolve(responseHandler($scope.vis, requestHandlerResponse));
+    }, e => {
+      // error state - omitted for readability
+    })
+    .then(resp => {
+      $scope.visData = resp;
+      $scope.$apply();
+      $scope.$broadcast('render');
+      return resp;
+    });
+}, 100);
+
+const handleQueryUpdate = ()=> {
+  $scope.fetch();
+};
+queryFilter.on('update', handleQueryUpdate);
+
+if ($scope.appState) {
+  const stateMonitor = stateMonitorFactory.create($scope.appState);
+  stateMonitor.onChange((status, type, keys) => {
+    if (keys[0] === 'vis') {
+      if ($scope.appState.vis) $scope.vis.setState($scope.appState.vis);
+      $scope.fetch();
+    }
+    if ($scope.vis.type.requiresSearch && ['query', 'filters'].includes(keys[0])) {
+      $scope.fetch();
+    }
+  });
+
+  $scope.$on('$destroy', () => {
+    stateMonitor.destroy();
+  });
+}
+
+$scope.$listen(timefilter, 'fetch', $scope.fetch);
+$scope.uiState.on('change', $scope.fetch);
+resizeChecker.on('resize', $scope.fetch);
+```
+
+[courier](https://github.com/elastic/kibana/blob/6.0/src/ui/public/vis/request_handlers/courier.js) is the default request handler. `Courier` converts your Visualization Search Source into an `search` request that gets put on `Courier's` queue for fetching
+
+```
+import _ from 'lodash';
+import { SearchSourceProvider } from 'ui/courier/data_source/search_source';
+import { VisRequestHandlersRegistryProvider } from 'ui/registry/vis_request_handlers';
+
+const CourierRequestHandlerProvider = function (Private, courier, timefilter) {
+  const SearchSource = Private(SearchSourceProvider);
+
+  return {
+    name: 'courier',
+    handler: function (vis, appState, uiState, queryFilter, searchSource) {
+
+
+      if (queryFilter && vis.editorMode) {
+        searchSource.set('filter', queryFilter.getFilters());
+        searchSource.set('query', appState.query);
+      }
+
+      return new Promise((resolve, reject) => {
+        searchSource.onResults().then(resp => {
+          resolve(_.cloneDeep(resp));
+        }).catch(e => reject(e));
+        courier.fetch();
+      });
+    }
+  };
+};
+
+VisRequestHandlersRegistryProvider.register(CourierRequestHandlerProvider);
+```
+
+
 
 ## UI framework
 Re-usable [UI components](https://github.com/elastic/kibana/tree/master/ui_framework). **Warning:** This has been deprecated in 6.2 and will be replaced by [Elastic UI Framework](https://github.com/elastic/eui)
@@ -489,7 +578,8 @@ import chrome from 'ui/chrome';
 const myNewProperty = chrome.getInjected('myNewProperty');
 ```
 
-### Visualization plugin
+### Visualization plugins
+
 Visualization plugins were completely refactored in 6.0.
 
 #### Access Kibana dependencies
