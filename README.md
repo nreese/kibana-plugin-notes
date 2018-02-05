@@ -1,6 +1,7 @@
 # Kibana knowledge share
 This is a collection of knowledge that will make Kibana code and plugin development a little bit easier.
 
+
 ## Future proof your plugins
 **Note:** Kibana is constantly changing and getting better. This document is targeted at the 6.0 baseline. Examples and architecture will not be accurate for future versions of kibana. 
 
@@ -9,7 +10,9 @@ This is a collection of knowledge that will make Kibana code and plugin developm
 3) Write Jest tests instead of Mocha tests
 4) Inside of plugins, try to limit `ui/` imports and rely on `vis.API` for dependency injection. Future versions of Kibana will try to more module and limit allowing plugins to import directly from one module to another.
 
-## Complete understanding of Javascript
+
+## Foundational knowledge
+Kibana uses the lastest Javascript. Getting familiar with newer language features from ECMAScript 6 and TC-39 helps a lot.
 
 ### Functions are objects
 Functions are objects and can have properties.
@@ -27,9 +30,6 @@ console.log( myFunc(1,2) ) // 3
 console.log( myFunc.prop1 ) // someValue
 console.log( myFunc.prop2() ) // a function property of a function, my head hurts
 ```
-
-## ECMAScript 6 and TC-39
-Kibana uses the lastest Javascript. Getting familiar with newer language features helps a lot.
 
 ### [Destructuring assignment](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)
 Concise way of unpacking values from arrays, or properties from objects, into distinct variables.
@@ -134,9 +134,6 @@ const insertAtIndex = (origArray, index, newItem) => [
 ];
 ```
 
-
-## Kibana idiosyncrasies
-
 ### Build process
 Understanding the build process makes it easier to find things in source code 
 
@@ -211,6 +208,8 @@ import { VisFactoryProvider } from 'ui/vis/vis_factory';
 import 'plugins/markdown_vis/markdown_vis_controller';
 ```
 
+## Kibana deep-dive
+
 ### Dependency injection
 AngularJS doesn't handle namespace collisions for services. If you have 2 different modules with identical service names and include both modules in your app, which service will be made provided?
 
@@ -231,7 +230,6 @@ import { AggTypesBucketsDateHistogramProvider } from 'ui/agg_types/buckets/date_
 
 Private(AggTypesBucketsDateHistogramProvider),
 ```
-
 
 ### [Indexed Array](https://github.com/elastic/kibana/blob/6.0/src/ui/public/indexed_array/indexed_array.js#L24)
 An array with some special methods added to make searching easy.
@@ -339,7 +337,6 @@ const visTypes = Private(VisTypesRegistryProvider);
 this.type = visTypes.byName[type];
 ```
 
-
 ### SearchSource and Courier
 [SearchSource](https://github.com/elastic/kibana/blob/6.0/src/ui/public/courier/data_source/search_source.js) is Kibana's wrapper around Elastic Search `search`.
 
@@ -381,7 +378,6 @@ SourceAbstract.prototype.onResults = function (handler) {
 ```
 
 [Courier](https://github.com/elastic/kibana/blob/6.0/src/ui/public/courier/courier.js) is Kibana's queueing mechanim around `_msearch`. All items in the request queue are serilized into a single `_msearch` request with a seperate `header\n body\n` section per item in the queue.
-
 
 ### The `msearch` life-cycle: dashboard, visualizations, SearchSource, and Courier
 Visualization panels are wrapped in the [visualize directive](https://github.com/elastic/kibana/blob/6.0/src/ui/public/visualize/visualize.js). The visualize directive monitors the application state and calls request/response handlers as needed.
@@ -470,7 +466,6 @@ const CourierRequestHandlerProvider = function (Private, courier, timefilter) {
 
 VisRequestHandlersRegistryProvider.register(CourierRequestHandlerProvider);
 ```
-
 
 
 ## UI framework
