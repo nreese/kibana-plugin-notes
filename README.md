@@ -443,14 +443,94 @@ import chrome from 'ui/chrome';
 const myNewProperty = chrome.getInjected('myNewProperty');
 ```
 
-### Access saved objects like `Index Patterns` and `Saved Searchs`
 
-
-### Interact with Kibana global time
 
 ### Hack plugin
 
 ### Visualization plugin
+Visualization plugins were completely refactored in 6.0.
+
+#### Access Kibana dependencies from `vis.API` instead of import providers and calling `Private(Provider)`
+
+https://github.com/elastic/kibana/blob/6.0/src/ui/public/vis/vis.js#L58
+```
+this.API = {
+  savedObjectsClient: savedObjectsClient,
+  SearchSource: SearchSource,
+  indexPatterns: indexPatterns,
+  timeFilter: timefilter,
+  filterManager: filterManager,
+  queryFilter: queryFilter,
+  events: {...}
+};
+```
+
+##### Accessing saved objects
+`savedObjectsClient` provides a future proof method 
+
+```
+import { MyReactTab } from './components/editor/controls_tab';
+import { VisFactoryProvider } from 'ui/vis/vis_factory';
+import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
+
+function MyVisPluginProvider(Private) {
+  const VisFactory = Private(VisFactoryProvider);
+
+  // return the visType object, which kibana will use to display and configure new Vis object of this type.
+  return VisFactory.createBaseVisualization({
+    editor: 'default',
+    editorConfig: {
+      optionTabs: [
+        {
+          name: 'myTab',
+          title: 'My tab',
+          editor: MyReactTab
+        }
+      ]
+    }
+  });
+}
+```
+
+```
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+
+export class MyReactTab extends Component {
+
+  getIndexPatterns = async (search) => {
+    const resp = await this.props.scope.vis.API.savedObjectsClient.find({
+      type: 'index-pattern',
+      fields: ['title'],
+      search: `${search}*`,
+      search_fields: ['title'],
+      perPage: 100
+    });
+    return resp.savedObjects;
+  }
+
+  render() {
+    return (
+      <div></div>
+    );
+  }
+}
+
+MyReactTab.propTypes = {
+  scope: PropTypes.object.isRequired,
+  stageEditorParams: PropTypes.func.isRequired
+};
+```
+
+Example plugin - [input controls](https://github.com/elastic/kibana/blob/6.1/src/core_plugins/input_control_vis/public/components/editor/controls_tab.js#L15)
+
+#### Interact with Kibana global time
+
+
+
+
+
+
 
 ### field formatter plugin
 
