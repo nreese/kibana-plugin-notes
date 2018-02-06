@@ -609,75 +609,147 @@ Tabify converts Elastic Search response into table
 
 ```
 visData.series = [
- {
-  "label": "win 7",
-  "aggLabel": "Count",
-  "aggId": "1",
-  "count": 0,
-  "values": [
-   {
-    "x": 1502064000000,
-    "y": 2924,
-    "series": "win 7"
-   }
-  ]
- },
- {
-  "label": "ios",
-  "aggLabel": "Count",
-  "aggId": "1",
-  "count": 0,
-  "values": [
-   {
-    "x": 1502064000000,
-    "y": 2838,
-    "series": "ios"
-   }
-  ]
- },
- {
-  "label": "win 8",
-  "aggLabel": "Count",
-  "aggId": "1",
-  "count": 0,
-  "values": [
-   {
-    "x": 1502064000000,
-    "y": 2750,
-    "series": "win 8"
-   }
-  ]
- },
- {
-  "label": "win xp",
-  "aggLabel": "Count",
-  "aggId": "1",
-  "count": 0,
-  "values": [
-   {
-    "x": 1502064000000,
-    "y": 2659,
-    "series": "win xp"
-   }
-  ]
- },
- {
-  "label": "osx",
-  "aggLabel": "Count",
-  "aggId": "1",
-  "count": 0,
-  "values": [
-   {
-    "x": 1502064000000,
-    "y": 1385,
-    "series": "osx"
-   }
-  ]
- }
+  {
+    "label": "win 7",
+    "aggLabel": "Count",
+    "aggId": "1",
+    "count": 0,
+    "values": [
+      {
+        "x": 1502064000000,
+        "y": 2924,
+        "series": "win 7"
+      }
+    ]
+  },
+  {
+    "label": "ios",
+    "aggLabel": "Count",
+    "aggId": "1",
+    "count": 0,
+    "values": [
+      {
+        "x": 1502064000000,
+        "y": 2838,
+        "series": "ios"
+      }
+    ]
+  },
+  {
+    "label": "win 8",
+    "values": []
+  },
+  {
+    "label": "win xp",
+    "values": []
+  },
+  {
+    "label": "osx",
+    "values": []
+  }
 ]
 ```
 
 Here is an example with split chart.
+
+```
+visState: {
+  "aggs": [
+    {
+      "id": "1",
+      "enabled": true,
+      "type": "count",
+      "schema": "metric",
+      "params": {}
+    },
+    {
+      "id": "2",
+      "enabled": true,
+      "type": "date_histogram",
+      "schema": "segment",
+      "params": {
+        "field": "@timestamp",
+        "interval": "auto",
+        "customInterval": "2h",
+        "min_doc_count": 1,
+        "extended_bounds": {}
+      }
+    },
+    {
+      "id": "3",
+      "enabled": true,
+      "type": "terms",
+      "schema": "split",
+      "params": {
+        "field": "machine.os.raw",
+        "otherBucket": false,
+        "otherBucketLabel": "Other",
+        "missingBucket": false,
+        "missingBucketLabel": "Missing",
+        "size": 5,
+        "order": "desc",
+        "orderBy": "1",
+        "row": true
+      }
+    }
+  ]
+}
+```
+
+The aggregation request and response contents are the same.
+
+```
+visData.rows = [
+  {
+    "series": [
+      {
+        "label": "Count",
+        "aggLabel": "Count",
+        "aggId": "1",
+        "count": 0,
+        "values": [
+          {
+            "x": 1502064000000,
+            "y": 2924,
+            "series": "Count"
+          }
+        ]
+      }
+    ],
+    "label": "win 7: machine.os.raw: Descending"
+  },
+  {
+    "series": [
+      {
+        "label": "Count",
+        "aggLabel": "Count",
+        "aggId": "1",
+        "count": 0,
+        "values": [
+          {
+            "x": 1502064000000,
+            "y": 2838,
+            "series": "Count"
+          }
+        ]
+      }
+    ],
+    "label": "ios: machine.os.raw: Descending"
+  },
+  {
+    "series": [],
+    "label": "win 8: machine.os.raw: Descending"
+  },
+  {
+   "series": [],
+   "label": "win xp: machine.os.raw: Descending"
+  },
+  {
+   "series": [],
+   "label": "osx: machine.os.raw: Descending"
+  }
+]
+```
 
 
 ## UI framework
