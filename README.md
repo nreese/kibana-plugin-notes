@@ -460,6 +460,537 @@ const CourierRequestHandlerProvider = function (Private, courier, timefilter) {
 VisRequestHandlersRegistryProvider.register(CourierRequestHandlerProvider);
 ```
 
+### visualizations, saved objects, and aggregations
+
+[SavedVis](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/kibana/public/visualize/saved_visualizations/_saved_vis.js#L79) inherits from SavedObject. SavedVis links the Visualization aggregation configurations to the SearchSource.  
+```
+self.searchSource.aggs(function () {
+  return self.vis.aggs.toDsl();
+});
+```
+
+`vis.aggs` is an instance of [AggConfigs](https://github.com/elastic/kibana/blob/6.0/src/ui/public/vis/agg_configs.js). AggConfigs is a wrapper around Elastic Search aggregations.
+
+```
+visState: {
+  "aggs": [
+    {
+      "id": "1",
+      "enabled": true,
+      "type": "count",
+      "schema": "metric",
+      "params": {}
+    },
+    {
+      "id": "2",
+      "enabled": true,
+      "type": "date_histogram",
+      "schema": "segment",
+      "params": {
+        "field": "@timestamp",
+        "interval": "auto",
+        "customInterval": "2h",
+        "min_doc_count": 1,
+        "extended_bounds": {}
+      }
+    },
+    {
+      "id": "3",
+      "enabled": true,
+      "type": "terms",
+      "schema": "group",
+      "params": {
+        "field": "machine.os.raw",
+        "otherBucket": false,
+        "otherBucketLabel": "Other",
+        "missingBucket": false,
+        "missingBucketLabel": "Missing",
+        "size": 5,
+        "order": "desc",
+        "orderBy": "1"
+      }
+    }
+  ]
+}
+```
+
+[AggConfigs.prototype.toDsl](https://github.com/elastic/kibana/blob/6.0/src/ui/public/vis/agg_configs.js#L93) serializes list of [AggConfig](https://github.com/elastic/kibana/blob/6.0/src/ui/public/vis/agg_config.js) instances into Elastic Search aggregation DSL.
+```
+{
+  "size": 0,
+  "_source": {
+    "excludes": []
+  },
+  "aggs": {
+    "2": {
+      "date_histogram": {
+        "field": "@timestamp",
+        "interval": "1w",
+        "time_zone": "UCT",
+        "min_doc_count": 1
+      },
+      "aggs": {
+        "3": {
+          "terms": {
+            "field": "machine.os.raw",
+            "size": 5,
+            "order": {
+              "_count": "desc"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Tabify converts Elastic Search response into table
+```
+{
+  "took": 0,
+  "responses": [
+    {
+      "took": 0,
+      "timed_out": false,
+      "_shards": {
+        "total": 1,
+        "successful": 1,
+        "skipped": 0,
+        "failed": 0
+      },
+      "hits": {
+        "total": 14005,
+        "max_score": 0.0,
+        "hits": []
+      },
+      "aggregations": {
+        "2": {
+          "buckets": [
+            {
+              "key_as_string": "2017-08-07T00:00:00.000Z",
+              "key": 1502064000000,
+              "doc_count": 14005,
+              "3": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 0,
+                "buckets": [
+                  {
+                    "key": "win 7",
+                    "doc_count": 2924
+                  },
+                  {
+                    "key": "ios",
+                    "doc_count": 2838
+                  },
+                  {
+                    "key": "win 8",
+                    "doc_count": 2750
+                  },
+                  {
+                    "key": "win xp",
+                    "doc_count": 2659
+                  },
+                  {
+                    "key": "osx",
+                    "doc_count": 1385
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "status": 200
+    }
+  ]
+}
+```
+
+```
+visData.series = [
+ {
+  "label": "win 7",
+  "aggLabel": "Count",
+  "aggId": "1",
+  "count": 0,
+  "values": [
+   {
+    "x": 1502064000000,
+    "y": 2924,
+    
+      "$parent": {
+       "key": 1502064000000,
+       "value": 1502064000000,
+       "aggConfig": {
+        "id": "2",
+        "enabled": true,
+        "type": "date_histogram",
+        "schema": "segment",
+        "params": {
+         "field": "@timestamp",
+         "interval": "auto",
+         "customInterval": "2h",
+         "min_doc_count": 1,
+         "extended_bounds": {}
+        }
+       },
+       "type": "bucket"
+      },
+      "type": "bucket"
+     },
+     "type": "metric"
+    },
+    "extraMetrics": [],
+    "aggConfig": {
+     "id": "3",
+     "enabled": true,
+     "type": "terms",
+     "schema": "group",
+     "params": {
+      "field": "machine.os.raw",
+      "otherBucket": false,
+      "otherBucketLabel": "Other",
+      "missingBucket": false,
+      "missingBucketLabel": "Missing",
+      "size": 5,
+      "order": "desc",
+      "orderBy": "1"
+     }
+    },
+    "series": "win 7"
+   }
+  ]
+ },
+ {
+  "label": "ios",
+  "aggLabel": "Count",
+  "aggId": "1",
+  "count": 0,
+  "values": [
+   {
+    "x": 1502064000000,
+    "y": 2838,
+    "aggConfigResult": {
+     "key": 2838,
+     "value": 2838,
+     "aggConfig": {
+      "id": "1",
+      "enabled": true,
+      "type": "count",
+      "schema": "metric",
+      "params": {}
+     },
+     "$parent": {
+      "key": "ios",
+      "value": "ios",
+      "aggConfig": {
+       "id": "3",
+       "enabled": true,
+       "type": "terms",
+       "schema": "group",
+       "params": {
+        "field": "machine.os.raw",
+        "otherBucket": false,
+        "otherBucketLabel": "Other",
+        "missingBucket": false,
+        "missingBucketLabel": "Missing",
+        "size": 5,
+        "order": "desc",
+        "orderBy": "1"
+       }
+      },
+      "$parent": {
+       "key": 1502064000000,
+       "value": 1502064000000,
+       "aggConfig": {
+        "id": "2",
+        "enabled": true,
+        "type": "date_histogram",
+        "schema": "segment",
+        "params": {
+         "field": "@timestamp",
+         "interval": "auto",
+         "customInterval": "2h",
+         "min_doc_count": 1,
+         "extended_bounds": {}
+        }
+       },
+       "type": "bucket"
+      },
+      "type": "bucket"
+     },
+     "type": "metric"
+    },
+    "extraMetrics": [],
+    "aggConfig": {
+     "id": "3",
+     "enabled": true,
+     "type": "terms",
+     "schema": "group",
+     "params": {
+      "field": "machine.os.raw",
+      "otherBucket": false,
+      "otherBucketLabel": "Other",
+      "missingBucket": false,
+      "missingBucketLabel": "Missing",
+      "size": 5,
+      "order": "desc",
+      "orderBy": "1"
+     }
+    },
+    "series": "ios"
+   }
+  ]
+ },
+ {
+  "label": "win 8",
+  "aggLabel": "Count",
+  "aggId": "1",
+  "count": 0,
+  "values": [
+   {
+    "x": 1502064000000,
+    "y": 2750,
+    "aggConfigResult": {
+     "key": 2750,
+     "value": 2750,
+     "aggConfig": {
+      "id": "1",
+      "enabled": true,
+      "type": "count",
+      "schema": "metric",
+      "params": {}
+     },
+     "$parent": {
+      "key": "win 8",
+      "value": "win 8",
+      "aggConfig": {
+       "id": "3",
+       "enabled": true,
+       "type": "terms",
+       "schema": "group",
+       "params": {
+        "field": "machine.os.raw",
+        "otherBucket": false,
+        "otherBucketLabel": "Other",
+        "missingBucket": false,
+        "missingBucketLabel": "Missing",
+        "size": 5,
+        "order": "desc",
+        "orderBy": "1"
+       }
+      },
+      "$parent": {
+       "key": 1502064000000,
+       "value": 1502064000000,
+       "aggConfig": {
+        "id": "2",
+        "enabled": true,
+        "type": "date_histogram",
+        "schema": "segment",
+        "params": {
+         "field": "@timestamp",
+         "interval": "auto",
+         "customInterval": "2h",
+         "min_doc_count": 1,
+         "extended_bounds": {}
+        }
+       },
+       "type": "bucket"
+      },
+      "type": "bucket"
+     },
+     "type": "metric"
+    },
+    "extraMetrics": [],
+    "aggConfig": {
+     "id": "3",
+     "enabled": true,
+     "type": "terms",
+     "schema": "group",
+     "params": {
+      "field": "machine.os.raw",
+      "otherBucket": false,
+      "otherBucketLabel": "Other",
+      "missingBucket": false,
+      "missingBucketLabel": "Missing",
+      "size": 5,
+      "order": "desc",
+      "orderBy": "1"
+     }
+    },
+    "series": "win 8"
+   }
+  ]
+ },
+ {
+  "label": "win xp",
+  "aggLabel": "Count",
+  "aggId": "1",
+  "count": 0,
+  "values": [
+   {
+    "x": 1502064000000,
+    "y": 2659,
+    "aggConfigResult": {
+     "key": 2659,
+     "value": 2659,
+     "aggConfig": {
+      "id": "1",
+      "enabled": true,
+      "type": "count",
+      "schema": "metric",
+      "params": {}
+     },
+     "$parent": {
+      "key": "win xp",
+      "value": "win xp",
+      "aggConfig": {
+       "id": "3",
+       "enabled": true,
+       "type": "terms",
+       "schema": "group",
+       "params": {
+        "field": "machine.os.raw",
+        "otherBucket": false,
+        "otherBucketLabel": "Other",
+        "missingBucket": false,
+        "missingBucketLabel": "Missing",
+        "size": 5,
+        "order": "desc",
+        "orderBy": "1"
+       }
+      },
+      "$parent": {
+       "key": 1502064000000,
+       "value": 1502064000000,
+       "aggConfig": {
+        "id": "2",
+        "enabled": true,
+        "type": "date_histogram",
+        "schema": "segment",
+        "params": {
+         "field": "@timestamp",
+         "interval": "auto",
+         "customInterval": "2h",
+         "min_doc_count": 1,
+         "extended_bounds": {}
+        }
+       },
+       "type": "bucket"
+      },
+      "type": "bucket"
+     },
+     "type": "metric"
+    },
+    "extraMetrics": [],
+    "aggConfig": {
+     "id": "3",
+     "enabled": true,
+     "type": "terms",
+     "schema": "group",
+     "params": {
+      "field": "machine.os.raw",
+      "otherBucket": false,
+      "otherBucketLabel": "Other",
+      "missingBucket": false,
+      "missingBucketLabel": "Missing",
+      "size": 5,
+      "order": "desc",
+      "orderBy": "1"
+     }
+    },
+    "series": "win xp"
+   }
+  ]
+ },
+ {
+  "label": "osx",
+  "aggLabel": "Count",
+  "aggId": "1",
+  "count": 0,
+  "values": [
+   {
+    "x": 1502064000000,
+    "y": 1385,
+    "aggConfigResult": {
+     "key": 1385,
+     "value": 1385,
+     "aggConfig": {
+      "id": "1",
+      "enabled": true,
+      "type": "count",
+      "schema": "metric",
+      "params": {}
+     },
+     "$parent": {
+      "key": "osx",
+      "value": "osx",
+      "aggConfig": {
+       "id": "3",
+       "enabled": true,
+       "type": "terms",
+       "schema": "group",
+       "params": {
+        "field": "machine.os.raw",
+        "otherBucket": false,
+        "otherBucketLabel": "Other",
+        "missingBucket": false,
+        "missingBucketLabel": "Missing",
+        "size": 5,
+        "order": "desc",
+        "orderBy": "1"
+       }
+      },
+      "$parent": {
+       "key": 1502064000000,
+       "value": 1502064000000,
+       "aggConfig": {
+        "id": "2",
+        "enabled": true,
+        "type": "date_histogram",
+        "schema": "segment",
+        "params": {
+         "field": "@timestamp",
+         "interval": "auto",
+         "customInterval": "2h",
+         "min_doc_count": 1,
+         "extended_bounds": {}
+        }
+       },
+       "type": "bucket"
+      },
+      "type": "bucket"
+     },
+     "type": "metric"
+    },
+    "extraMetrics": [],
+    "aggConfig": {
+     "id": "3",
+     "enabled": true,
+     "type": "terms",
+     "schema": "group",
+     "params": {
+      "field": "machine.os.raw",
+      "otherBucket": false,
+      "otherBucketLabel": "Other",
+      "missingBucket": false,
+      "missingBucketLabel": "Missing",
+      "size": 5,
+      "order": "desc",
+      "orderBy": "1"
+     }
+    },
+    "series": "osx"
+   }
+  ]
+ }
+]
+```
+
+Here is an example with split chart.
+
 
 ## UI framework
 Re-usable [UI components](https://github.com/elastic/kibana/tree/master/ui_framework). **Warning:** This has been deprecated in 6.2 and will be replaced by [Elastic UI Framework](https://github.com/elastic/eui)
