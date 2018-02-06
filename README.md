@@ -618,46 +618,6 @@ visData.series = [
    {
     "x": 1502064000000,
     "y": 2924,
-    
-      "$parent": {
-       "key": 1502064000000,
-       "value": 1502064000000,
-       "aggConfig": {
-        "id": "2",
-        "enabled": true,
-        "type": "date_histogram",
-        "schema": "segment",
-        "params": {
-         "field": "@timestamp",
-         "interval": "auto",
-         "customInterval": "2h",
-         "min_doc_count": 1,
-         "extended_bounds": {}
-        }
-       },
-       "type": "bucket"
-      },
-      "type": "bucket"
-     },
-     "type": "metric"
-    },
-    "extraMetrics": [],
-    "aggConfig": {
-     "id": "3",
-     "enabled": true,
-     "type": "terms",
-     "schema": "group",
-     "params": {
-      "field": "machine.os.raw",
-      "otherBucket": false,
-      "otherBucketLabel": "Other",
-      "missingBucket": false,
-      "missingBucketLabel": "Missing",
-      "size": 5,
-      "order": "desc",
-      "orderBy": "1"
-     }
-    },
     "series": "win 7"
    }
   ]
@@ -671,74 +631,6 @@ visData.series = [
    {
     "x": 1502064000000,
     "y": 2838,
-    "aggConfigResult": {
-     "key": 2838,
-     "value": 2838,
-     "aggConfig": {
-      "id": "1",
-      "enabled": true,
-      "type": "count",
-      "schema": "metric",
-      "params": {}
-     },
-     "$parent": {
-      "key": "ios",
-      "value": "ios",
-      "aggConfig": {
-       "id": "3",
-       "enabled": true,
-       "type": "terms",
-       "schema": "group",
-       "params": {
-        "field": "machine.os.raw",
-        "otherBucket": false,
-        "otherBucketLabel": "Other",
-        "missingBucket": false,
-        "missingBucketLabel": "Missing",
-        "size": 5,
-        "order": "desc",
-        "orderBy": "1"
-       }
-      },
-      "$parent": {
-       "key": 1502064000000,
-       "value": 1502064000000,
-       "aggConfig": {
-        "id": "2",
-        "enabled": true,
-        "type": "date_histogram",
-        "schema": "segment",
-        "params": {
-         "field": "@timestamp",
-         "interval": "auto",
-         "customInterval": "2h",
-         "min_doc_count": 1,
-         "extended_bounds": {}
-        }
-       },
-       "type": "bucket"
-      },
-      "type": "bucket"
-     },
-     "type": "metric"
-    },
-    "extraMetrics": [],
-    "aggConfig": {
-     "id": "3",
-     "enabled": true,
-     "type": "terms",
-     "schema": "group",
-     "params": {
-      "field": "machine.os.raw",
-      "otherBucket": false,
-      "otherBucketLabel": "Other",
-      "missingBucket": false,
-      "missingBucketLabel": "Missing",
-      "size": 5,
-      "order": "desc",
-      "orderBy": "1"
-     }
-    },
     "series": "ios"
    }
   ]
@@ -752,74 +644,6 @@ visData.series = [
    {
     "x": 1502064000000,
     "y": 2750,
-    "aggConfigResult": {
-     "key": 2750,
-     "value": 2750,
-     "aggConfig": {
-      "id": "1",
-      "enabled": true,
-      "type": "count",
-      "schema": "metric",
-      "params": {}
-     },
-     "$parent": {
-      "key": "win 8",
-      "value": "win 8",
-      "aggConfig": {
-       "id": "3",
-       "enabled": true,
-       "type": "terms",
-       "schema": "group",
-       "params": {
-        "field": "machine.os.raw",
-        "otherBucket": false,
-        "otherBucketLabel": "Other",
-        "missingBucket": false,
-        "missingBucketLabel": "Missing",
-        "size": 5,
-        "order": "desc",
-        "orderBy": "1"
-       }
-      },
-      "$parent": {
-       "key": 1502064000000,
-       "value": 1502064000000,
-       "aggConfig": {
-        "id": "2",
-        "enabled": true,
-        "type": "date_histogram",
-        "schema": "segment",
-        "params": {
-         "field": "@timestamp",
-         "interval": "auto",
-         "customInterval": "2h",
-         "min_doc_count": 1,
-         "extended_bounds": {}
-        }
-       },
-       "type": "bucket"
-      },
-      "type": "bucket"
-     },
-     "type": "metric"
-    },
-    "extraMetrics": [],
-    "aggConfig": {
-     "id": "3",
-     "enabled": true,
-     "type": "terms",
-     "schema": "group",
-     "params": {
-      "field": "machine.os.raw",
-      "otherBucket": false,
-      "otherBucketLabel": "Other",
-      "missingBucket": false,
-      "missingBucketLabel": "Missing",
-      "size": 5,
-      "order": "desc",
-      "orderBy": "1"
-     }
-    },
     "series": "win 8"
    }
   ]
@@ -833,74 +657,6 @@ visData.series = [
    {
     "x": 1502064000000,
     "y": 2659,
-    "aggConfigResult": {
-     "key": 2659,
-     "value": 2659,
-     "aggConfig": {
-      "id": "1",
-      "enabled": true,
-      "type": "count",
-      "schema": "metric",
-      "params": {}
-     },
-     "$parent": {
-      "key": "win xp",
-      "value": "win xp",
-      "aggConfig": {
-       "id": "3",
-       "enabled": true,
-       "type": "terms",
-       "schema": "group",
-       "params": {
-        "field": "machine.os.raw",
-        "otherBucket": false,
-        "otherBucketLabel": "Other",
-        "missingBucket": false,
-        "missingBucketLabel": "Missing",
-        "size": 5,
-        "order": "desc",
-        "orderBy": "1"
-       }
-      },
-      "$parent": {
-       "key": 1502064000000,
-       "value": 1502064000000,
-       "aggConfig": {
-        "id": "2",
-        "enabled": true,
-        "type": "date_histogram",
-        "schema": "segment",
-        "params": {
-         "field": "@timestamp",
-         "interval": "auto",
-         "customInterval": "2h",
-         "min_doc_count": 1,
-         "extended_bounds": {}
-        }
-       },
-       "type": "bucket"
-      },
-      "type": "bucket"
-     },
-     "type": "metric"
-    },
-    "extraMetrics": [],
-    "aggConfig": {
-     "id": "3",
-     "enabled": true,
-     "type": "terms",
-     "schema": "group",
-     "params": {
-      "field": "machine.os.raw",
-      "otherBucket": false,
-      "otherBucketLabel": "Other",
-      "missingBucket": false,
-      "missingBucketLabel": "Missing",
-      "size": 5,
-      "order": "desc",
-      "orderBy": "1"
-     }
-    },
     "series": "win xp"
    }
   ]
@@ -914,74 +670,6 @@ visData.series = [
    {
     "x": 1502064000000,
     "y": 1385,
-    "aggConfigResult": {
-     "key": 1385,
-     "value": 1385,
-     "aggConfig": {
-      "id": "1",
-      "enabled": true,
-      "type": "count",
-      "schema": "metric",
-      "params": {}
-     },
-     "$parent": {
-      "key": "osx",
-      "value": "osx",
-      "aggConfig": {
-       "id": "3",
-       "enabled": true,
-       "type": "terms",
-       "schema": "group",
-       "params": {
-        "field": "machine.os.raw",
-        "otherBucket": false,
-        "otherBucketLabel": "Other",
-        "missingBucket": false,
-        "missingBucketLabel": "Missing",
-        "size": 5,
-        "order": "desc",
-        "orderBy": "1"
-       }
-      },
-      "$parent": {
-       "key": 1502064000000,
-       "value": 1502064000000,
-       "aggConfig": {
-        "id": "2",
-        "enabled": true,
-        "type": "date_histogram",
-        "schema": "segment",
-        "params": {
-         "field": "@timestamp",
-         "interval": "auto",
-         "customInterval": "2h",
-         "min_doc_count": 1,
-         "extended_bounds": {}
-        }
-       },
-       "type": "bucket"
-      },
-      "type": "bucket"
-     },
-     "type": "metric"
-    },
-    "extraMetrics": [],
-    "aggConfig": {
-     "id": "3",
-     "enabled": true,
-     "type": "terms",
-     "schema": "group",
-     "params": {
-      "field": "machine.os.raw",
-      "otherBucket": false,
-      "otherBucketLabel": "Other",
-      "missingBucket": false,
-      "missingBucketLabel": "Missing",
-      "size": 5,
-      "order": "desc",
-      "orderBy": "1"
-     }
-    },
     "series": "osx"
    }
   ]
