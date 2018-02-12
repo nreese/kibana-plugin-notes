@@ -794,13 +794,11 @@ export default function (kibana) {
 ```
 
 #### Calling Elasticsearch cluster in endpoint
-[Cluster](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/elasticsearch/lib/cluster.js) is a wrapper around [Elasticsearch JavaScript API](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference-6-0.html).
+[Cluster](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/elasticsearch/lib/cluster.js) is a wrapper around Elasticsearch's [JavaScript API](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference-6-0.html). Cluster manages the `Client` instance and provides methods to making requests. [callWithRequest](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/elasticsearch/lib/cluster.js#L22) uses the permisisions of the request and should be used all of the time.
 
 Cluster types
-* `data` Elasticsearch cluster with data indicies. Configured in `config.yml` by `elasticsearch.url` in `config.yml`.
+* `data` Elasticsearch cluster with data indicies. Configured in `config.yml` with `elasticsearch.url`.
 * `admin` Elasticsearch cluster with `.kibana` index. In 6.0, configured by setting `elasticsearch.tribe.url`. **note** Tribe node is being removed from Elasticsearch/kibana since it has been superseded by Cross-Cluster-Search.
-
-[callWithRequest](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/elasticsearch/lib/cluster.js#L22) uses the permisisions of the request and should be used all of the time.
 
 ```
 const { callWithRequest } = server.plugins.elasticsearch.getCluster('admin'); // Getting admin cluster example
