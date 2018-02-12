@@ -794,9 +794,9 @@ export default function (kibana) {
 ```
 
 #### Calling Elasticsearch cluster in endpoint
-[Cluster](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/elasticsearch/lib/cluster.js) is a wrapper around [JavaScript API](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference-6-0.html).
+[Cluster](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/elasticsearch/lib/cluster.js) is a wrapper around [Elasticsearch JavaScript API](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference-6-0.html).
 
-Clusters
+Cluster types
 * `data` Elasticsearch cluster with data indicies. Configured in `config.yml` by `elasticsearch.url` in `config.yml`.
 * `admin` Elasticsearch cluster with `.kibana` index. In 6.0, configured by setting `elasticsearch.tribe.url`. **note** Tribe node is being removed from Elasticsearch/kibana since it has been superseded by Cross-Cluster-Search.
 
@@ -810,7 +810,7 @@ const { callWithRequest } = server.plugins.elasticsearch.getCluster('admin'); //
 const { callWithRequest } = server.plugins.elasticsearch.getCluster('data');
 ```
 
-Good example is how [timelion executes '_search' requests](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/timelion/server/series_functions/es/index.js#L66)
+Example: [timelion](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/timelion/server/series_functions/es/index.js#L66) executing `_search` requests.
 ```
 const { callWithRequest } = tlConfig.server.plugins.elasticsearch.getCluster('data');
 
