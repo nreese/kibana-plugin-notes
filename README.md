@@ -793,6 +793,38 @@ export default function (kibana) {
 }
 ```
 
+#### Calling Elasticsearch cluster in endpoint
+[Cluster](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/elasticsearch/lib/cluster.js) is a wrapper around [JavaScript API](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference-6-0.html).
+
+Clusters
+* `data` Elasticsearch cluster with data indicies. Configured in `config.yml` by `elasticsearch.url` in `config.yml`.
+* `admin` Elasticsearch cluster with `.kibana` index. In 6.0, configured by setting `elasticsearch.tribe.url`. **note** Tribe node is being removed from Elasticsearch/kibana since it has been superseded by Cross-Cluster-Search.
+
+[callWithRequest](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/elasticsearch/lib/cluster.js#L22) uses the permisisions of the request and should be used all of the time.
+
+```
+const { callWithRequest } = server.plugins.elasticsearch.getCluster('admin'); // Getting admin cluster example
+```
+
+```
+const { callWithRequest } = server.plugins.elasticsearch.getCluster('data');
+```
+
+Good example is how [timelion executes '_search' requests](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/timelion/server/series_functions/es/index.js#L66)
+```
+const { callWithRequest } = tlConfig.server.plugins.elasticsearch.getCluster('data');
+
+const body = buildRequest(config, tlConfig);
+
+return callWithRequest(tlConfig.request, 'search', body).then(function (resp) {
+  if (!resp._shards.total) throw new Error('Elasticsearch index not found: ' + config.index);
+  return {
+    type: 'seriesList',
+    list: toSeriesList(resp.aggregations, config)
+  };
+});
+```
+
 ### New Advanced Setting config value
 Specify [uiSettingDefaults](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/timelion/index.js#L44) property of `uiExports`.
 
