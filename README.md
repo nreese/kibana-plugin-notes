@@ -964,7 +964,98 @@ MyReactTab.propTypes = {
 };
 ```
 
-Live example - [input controls ControlsTab](https://github.com/elastic/kibana/blob/6.1/src/core_plugins/input_control_vis/public/components/editor/controls_tab.js#L15)
+Example - [input controls ControlsTab](https://github.com/elastic/kibana/blob/6.1/src/core_plugins/input_control_vis/public/components/editor/controls_tab.js#L15)
+
+##### Interact with Time Picker
+`vis.API` provides access to `timeFilter` which is the [timefilter](https://github.com/elastic/kibana/blob/6.0/src/ui/public/timefilter/timefilter.js#L19) angular service instance.
+
+##### Interact with Filter Bar
+`vis.API` provides access to `queryFilter`. [queryFilter](https://github.com/elastic/kibana/blob/6.0/src/ui/public/filter_bar/query_filter.js) provides the filter bar API.
+Use `queryFilter` to interact with the Filter Bar.
+
+```
+import { VisFactoryProvider } from 'ui/vis/vis_factory';
+import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
+import { VisController } from './vis_controller';
+
+function FilterBarExampleVisProvider(Private) {
+  const VisFactory = Private(VisFactoryProvider);
+
+  return VisFactory.createBaseVisualization({
+    name: 'filter_bar_example_vis',
+    title: 'Filter bar example vis',
+    description: 'This is an example of how to interact with the filter bar.',
+    visualization: VisController,
+    editor: 'default',
+    requestHandler: 'none',
+    responseHandler: 'none',
+  });
+}
+
+VisTypesRegistryProvider.register(FilterBarExampleVisProvider);
+```
+
+```
+import { buildPhraseFilter } from 'ui/filter_manager/lib/phrase';
+
+class VisController {
+  constructor(el, vis) {
+    this.el = el;
+    this.vis = vis;
+    this.controls = [];
+
+    this.onFilterChangeHandler = this.onFilterChange.bind(this);
+    this.vis.API.queryFilter.on('update', this.onFilterChangeHandler);
+  }
+
+  destroy() {
+    this.vis.API.queryFilter.off('update', this.onFilterChangeHandler);
+  }
+
+  async render(visData, status) {
+    // plugin does nothing yet, just return
+    return;
+  }
+
+  findFilter(controlledById) {
+    return this.queryFilter.getFilters().find((kbnFilter) => {
+      let isMyFilter = false;
+      if (kbnFilter.meta.controlledBy === controlledById) {
+        isMyFilter = true;
+      }
+      return isMyFilter;
+    });
+  }
+
+  removeFilter() {
+    const myFilter = findFilter('myId');
+    if (myFilter) {
+      this.vis.API.queryFilter.removeFilter(myFilter);
+    }
+  }
+
+  async addFilter() {
+    const indexPattern = await this.vis.API.indexPatterns.get('index pattern id');
+    const newFilter = buildPhraseFilter(
+      indexPattern.fields.byName['my field name'],
+      'filtering phrase',
+      indexPattern);
+    newFilter.meta.controlledBy = 'myId';
+
+    this.vis.API.queryFilter.addFilters([newFilter]);
+    // add filter pinned to global state
+    // this.vis.API.queryFilter.addFilters([newFilter], true);
+  }
+
+  onFilterChange() {
+    console.log('Kibana filter bar changed, maybe rerender?');
+  }
+}
+
+export { VisController };
+```
+
+Example - [input controls controller](https://github.com/elastic/kibana/blob/6.1/src/core_plugins/input_control_vis/public/components/editor/controls_tab.js#L15)
 
 #### Request handlers
 Visualization request handler gets called when the dashboard needs to pull new data. This happens when filters are added/removed/changed, when timepicker is updated, or when page is refreshed.
