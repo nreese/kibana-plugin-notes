@@ -107,10 +107,6 @@ const mySquaredArray = myArray.map((arrayElement) => {
 [Kibana Example](https://github.com/elastic/kibana/blob/master/src/core_plugins/kibana/public/home/components/home.js#L35)
 
 
-### [Async functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function)
-An async function returns a `Promise` when called. The `Promise` will be resolved when the async function returns a value.
-
-
 ### [Spread syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_operator)
 
 ```javascript
@@ -1056,6 +1052,98 @@ export { VisController };
 ```
 
 Example - [input controls controller](https://github.com/elastic/kibana/blob/6.1/src/core_plugins/input_control_vis/public/components/editor/controls_tab.js#L15)
+
+#### Visualizaiton state
+`visState` contains visualization state that is modified while editing a visualization. This includes `vis.params` and `vis.aggs`.
+
+```
+// Example visState for tile map visualization
+{
+  "title": "map",
+  "type": "tile_map",
+  "params": {
+    "mapType": "Scaled Circle Markers",
+    "isDesaturated": true,
+    "addTooltip": true,
+    "heatClusterSize": 1.5,
+    "legendPosition": "bottomright",
+    "mapZoom": 2,
+    "mapCenter": [
+      0,
+      0
+    ]
+  },
+  "aggs": [
+    {
+      "id": "1",
+      "enabled": true,
+      "type": "count",
+      "schema": "metric",
+      "params": {}
+    },
+    {
+      "id": "2",
+      "enabled": true,
+      "type": "geohash_grid",
+      "schema": "segment",
+      "params": {
+        "field": "geo.coordinates",
+        "autoPrecision": true,
+        "isFilteredByCollar": true,
+        "useGeocentroid": true,
+        "precision": 3
+      }
+    }
+  ]
+}
+```
+
+`uiState` contains state that is modified while using a visualiation. For example: panning a map and saving the location of the map view area.
+
+```
+// Example uiState for tile map visualization
+{
+  "mapZoom": 5,
+  "mapCenter": [
+    37.85750715625203,
+    -103.66699218750001
+  ]
+}
+```
+
+`uiState` is set by calling `uiStateVal` (terrible function name!). There is an example in [kibana_map](https://github.com/elastic/kibana/blob/6.0/src/core_plugins/tile_map/public/kibana_map.js#L658).
+
+```
+this.vis.uiStateVal('myUiState', 'something I will need later');
+```
+
+The useful thing about `uiState` is that when a visualization is placed in a dashboard, then the `uiState` is saved in the dashboard saved object. This is great because then a single visualitation can have different uiState for each dashboard. For example, you could have a single map visualization embedded in multiple dashboards and have each dashboard set the initial map location to a different location.
+
+```
+// Example panelsJSON  for a dashboard.
+[
+  {
+    "embeddableConfig": {
+      "mapCenter": [
+        40.07807142745009,
+        -120.34423828125001
+      ],
+      "mapZoom": 5
+    },
+    "gridData": {
+      "h": 5,
+      "i": "1",
+      "w": 7,
+      "x": 0,
+      "y": 0
+    },
+    "id": "1e730940-10e9-11e8-8d6e-4bb43ba8425f",
+    "panelIndex": "1",
+    "type": "visualization",
+    "version": "6.2.0"
+  }
+]
+```
 
 #### Request handlers
 Visualization request handler gets called when the dashboard needs to pull new data. This happens when filters are added/removed/changed, when timepicker is updated, or when page is refreshed.
