@@ -1120,7 +1120,22 @@ this.vis.uiStateVal('myUiState', 'something I will need later');
 The useful thing about `uiState` is that when a visualization is placed in a dashboard, then the `uiState` is saved in the dashboard saved object. This is great because then a single visualitation can have different uiState for each dashboard. For example, you could have a single map visualization embedded in multiple dashboards and have each dashboard set the initial map location to a different location.
 
 ```
-// Example panelsJSON  for a dashboard.
+// Example uiStateJSON (6.0) for a dashboard.
+{
+  "P-1": {
+    "mapCenter": [
+      27.059125784374068,
+      -105.99609375000001
+    ],
+    "mapZoom": 2
+  }
+}
+```
+
+**Note** In 6.1, uiStateJSON was removed. The uiState is now stored under embeddableConfig in `panelsJSON`
+
+```
+// Example panelsJSON (6.1 +)  for a dashboard.
 [
   {
     "embeddableConfig": {
