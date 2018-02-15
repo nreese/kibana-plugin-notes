@@ -10,6 +10,8 @@ This is a collection of knowledge that will make Kibana code and plugin developm
 3) Write Jest tests instead of Mocha tests
 4) Inside of plugins, try to limit `ui/` imports and rely on `vis.API` for dependency injection. Future versions of Kibana will try to more module and limit allowing plugins to import directly from one module to another.
 
+## UI framework
+Re-usable [UI components](https://github.com/elastic/kibana/tree/master/ui_framework). **Warning:** This has been deprecated in 6.2 and will be replaced by [Elastic UI Framework](https://github.com/elastic/eui)
 
 ## Foundational knowledge (Javascript, ECMAScript 6 and TC-39, build process)
 
@@ -747,11 +749,6 @@ visData.rows = [
 ]
 ```
 
-
-## UI framework
-Re-usable [UI components](https://github.com/elastic/kibana/tree/master/ui_framework). **Warning:** This has been deprecated in 6.2 and will be replaced by [Elastic UI Framework](https://github.com/elastic/eui)
-
-
 ## Plugin examples
 6.0 resources
 * [Developing Kibana Visualizations - video](https://www.elastic.co/webinars/creating-custom-kibana-visualizations)
@@ -1052,6 +1049,37 @@ export { VisController };
 ```
 
 Example - [input controls controller](https://github.com/elastic/kibana/blob/6.1/src/core_plugins/input_control_vis/public/components/editor/controls_tab.js#L15)
+
+#### Make Elasticsearch `search` request from client
+
+```
+async function search() {
+  const indexPattern = await this.vis.API.indexPatterns.get('index pattern id');
+  
+  const searchSource = new vis.API.SearchSource();
+
+  // Do not not inherit from rootSearchSource to avoid picking up time and globals
+  searchSource.inherits(false);
+
+  searchSource.size(0);
+  searchSource.index(indexPattern);
+  searchSource.aggs(() => {
+    return {
+      'termsAgg': {
+        'terms': {
+          field: 'myField'
+          size: 5,
+          order: {
+            _count: 'desc'
+          }
+        }
+      }
+    };
+  });
+  
+  const resp = await searchSource.fetch();
+}
+```
 
 #### Visualizaiton state
 `visState` contains visualization state that is modified while editing a visualization. This includes `vis.params` and `vis.aggs`.
