@@ -791,7 +791,7 @@ export default function (kibana) {
 
 Cluster types
 * `data` Elasticsearch cluster with data indicies. Configured in `config.yml` with `elasticsearch.url`.
-* `admin` Elasticsearch cluster with `.kibana` index. In 6.0, configured by setting `elasticsearch.tribe.url`. **note** Tribe node is being removed from Elasticsearch/kibana since it has been superseded by Cross-Cluster-Search.
+* `admin` Elasticsearch cluster with `.kibana` index. Accessed using the credentials of the user that is logged into Kibana's UI. In 6.0, configured by setting `elasticsearch.tribe.url`. **note** Tribe node is being removed from Elasticsearch/kibana since it has been superseded by Cross-Cluster-Search.
 
 ```
 const { callWithRequest } = server.plugins.elasticsearch.getCluster('admin');
